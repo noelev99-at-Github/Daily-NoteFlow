@@ -1,0 +1,46 @@
+body, html {
+    overflow: hidden;
+    height: 100%;
+  }
+
+.dashboard-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+  
+.left-panel {
+    background-color: rgba(255, 255, 255, 0.7);
+    margin: 20px;
+    height: 87vh; 
+    border-radius: 25px;
+    padding: 30px;
+    text-align: left;
+  } 
+    
+
+.dashBoardButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.makeFolder {
+  margin-right: 5px;
+  background-color: pink;
+  color: #000;
+} 
+
+.addNotes {
+  margin-left: 5px;
+}
+
+.notesTab {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+ 
+
+  
