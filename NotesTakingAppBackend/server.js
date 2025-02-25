@@ -108,5 +108,41 @@ app.get("/api/notes", async (req, res) => {
   }
 });
 
+// Updating Data in Note Window
+app.put("/notes/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, content, folder, userId } = req.body;
 
+  if (isNaN(folder)) {  // Make sure folder is a number
+    return res.status(400).json({ error: "Invalid folder ID" });
+  }
+  
+  try {
+    // Validate input
+    if (!id || !title || !content || !folder || !userId) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
+    // Ensure folder is treated as an ID (convert if needed)
+    const folderId = isNaN(folder) ? null : parseInt(folder, 10);
+
+    if (!folderId) {
+      return res.status(400).json({ error: "Invalid folder ID" });
+    }
+
+    // Update the note in the database
+    const result = await pool.query(
+      "UPDATE notes SET title = $1, content = $2, folder_id = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
+      [title, content, folderId, id, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Note not found or unauthorized" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error updating note:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});

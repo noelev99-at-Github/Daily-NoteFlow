@@ -39,7 +39,20 @@ const Dashboard = () => {
       return console.error("User ID is missing or invalid. Cannot add a note.");
     }
   
-    const newNote = { title: "", content: "", folder_id: 1, user_id: userId };
+    let folderId = 1; // Default to General Notes (if it exists)
+    try {
+      const folderRes = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
+      if (!folderRes.ok) throw new Error(`HTTP error! Status: ${folderRes.status}`);
+      const folders = await folderRes.json();
+      if (folders.length > 0) {
+        folderId = folders[0].id; // Set first folder as default
+      }
+    } catch (err) {
+      console.error("Error fetching folders:", err);
+    }
+  
+    const newNote = { title: "", content: "", folder_id: folderId, user_id: userId };
+  
     try {
       const res = await fetch("http://localhost:5000/api/notes", {
         method: "POST",
@@ -64,10 +77,8 @@ const Dashboard = () => {
     >
       <PanelGroup direction="horizontal">
         <Panel defaultSize={20} minSize={15} className="left-panel">
-          <div>
-            <h2>Hi there, {user.username}!</h2>
-            <p>Quote of the day: <i>The future belongs to those who believe in the beauty of their dreams</i></p>
-          </div>
+          <h2>Hi there, {user.username}!</h2>
+          <p>Quote of the day: <i>The future belongs to those who believe in the beauty of their dreams</i></p>
           <div className="dashBoardButtons">
             <button className="makeFolder" onClick={() => setIsModalOpen(true)}>
               Create Folder
