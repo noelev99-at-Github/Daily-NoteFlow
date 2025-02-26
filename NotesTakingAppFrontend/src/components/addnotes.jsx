@@ -27,6 +27,13 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
 
   const handleFolderChange = (e) => {
     const newFolderId = parseInt(e.target.value, 10);
+    
+    console.log("Folder Change Event Triggered");
+    console.log("New Folder ID:", newFolderId);
+    console.log("Current Note ID:", id);
+    console.log("Current Title:", title);
+    console.log("Current Content:", content);
+    
     setSelectedFolder(newFolderId);
     onUpdate(id, title, content, newFolderId);
   };

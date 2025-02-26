@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [user, setUser] = useState({ userId: "", username: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [folders, setFolders] = useState([]);
 
   // Fetch user data from session storage on component mount
   useEffect(() => {
@@ -17,6 +18,7 @@ const Dashboard = () => {
     if (userId) {
       setUser({ userId, username });
       fetchNotes(userId);
+      fetchFolders(userId);
     }
   }, []);
 
@@ -32,6 +34,17 @@ const Dashboard = () => {
     }
   };
 
+  const fetchFolders = async (userId) => {
+    try {
+      const res = await fetch(`http://localhost:5000/folders?user_id=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      const data = await res.json();
+      setFolders(data);
+    } catch (err) {
+      console.error("Error fetching folders:", err);
+    }
+  }
+
   //ADD NEW NOTE
   const addNewNote = async () => {
     const userId = Number(sessionStorage.getItem("userId"));
@@ -39,16 +52,26 @@ const Dashboard = () => {
       return console.error("User ID is missing or invalid. Cannot add a note.");
     }
   
-    let folderId = 1; // Default to General Notes (if it exists)
-    try {
-      const folderRes = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
-      if (!folderRes.ok) throw new Error(`HTTP error! Status: ${folderRes.status}`);
-      const folders = await folderRes.json();
-      if (folders.length > 0) {
-        folderId = folders[0].id; // Set first folder as default
+    let folderId = folders.length > 0 ? folders[0].id : null;
+  
+    // If no folders exist, fetch them again before assigning a default folder
+    if (!folderId) {
+      console.warn("No folders found. Fetching folders again.");
+      try {
+        const folderRes = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
+        if (!folderRes.ok) throw new Error(`HTTP error! Status: ${folderRes.status}`);
+        const fetchedFolders = await folderRes.json();
+  
+        if (fetchedFolders.length > 0) {
+          folderId = fetchedFolders[0].id;
+        } else {
+          alert("No folders available. Cannot add a note.");
+          return;
+        }
+      } catch (err) {
+        console.error("Error fetching folders:", err);
+        return;
       }
-    } catch (err) {
-      console.error("Error fetching folders:", err);
     }
   
     const newNote = { title: "", content: "", folder_id: folderId, user_id: userId };
@@ -66,6 +89,7 @@ const Dashboard = () => {
       console.error("Error creating note:", err);
     }
   };
+  
 
   return (
     <motion.div
@@ -86,8 +110,48 @@ const Dashboard = () => {
             <FolderModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
             <button className="addNotes" onClick={addNewNote}>Add Notes</button>
           </div>
-          <div className="notesTab">
-            <b>Production Priority Tasks</b>
+          <div className="folderTabContainer">
+          <div className="folderTab">
+            {folders.length === 0 ? (
+              <p>📂 No folders found.</p>
+            ) : (
+              folders.map((folder) => (
+                <div key={folder.id} className="folder">
+                  <div
+                    className="folder-header"
+                    onClick={() =>
+                      setFolders((prevFolders) =>
+                        prevFolders.map((f) =>
+                          f.id === folder.id ? { ...f, isOpen: !f.isOpen } : f
+                        )
+                      )
+                    }
+                  >
+                    📂 <strong>{folder.foldername}</strong>
+                  </div>
+                  {folder.isOpen && (
+                    <div className="notes-list">
+                      {notes.filter((note) => note.folder_id === folder.id).length === 0 ? (
+                        <p>📝 No Notes found.</p>
+                      ) : (
+                        notes
+                          .filter((note) => note.folder_id === folder.id)
+                          .map((note) => (
+                            <div
+                              key={note.id}
+                              className="leftpanelnote-title"
+                              onClick={() => alert(`Displaying note: ${note.title}`)} // Replace with sticky note display logic
+                            >
+                              📝 {note.title || "Untitled Note"}
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
           </div>
         </Panel>
         <Panel defaultSize={80} minSize={50} className="right-panel">
