@@ -3,12 +3,35 @@ import { motion } from "framer-motion";
 import { Panel, PanelGroup } from "react-resizable-panels";
 import FolderModal from "./components/makefolder";
 import { AddNotes } from "./components/addnotes";
+import Quote from "./components/quote";
+import DisplayNote from "./components/displaynotes";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const [user, setUser] = useState({ userId: "", username: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [folders, setFolders] = useState([]);
+
+useEffect(() => {
+  const userId = sessionStorage.getItem("userId");
+  if (userId) {
+    setUser({ userId, username: sessionStorage.getItem("username") });
+    fetchNotes(userId);
+    fetchFolders(userId); // Fetch folders on mount
+  }
+}, []);
+
+const fetchFolders = async (userId) => {
+  try {
+    const res = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    const data = await res.json();
+    setFolders(data);
+  } catch (err) {
+    console.error("Error fetching folders:", err);
+  }
+};
 
   // Fetch user data from session storage on component mount
   useEffect(() => {
@@ -76,9 +99,9 @@ const Dashboard = () => {
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <PanelGroup direction="horizontal">
-        <Panel defaultSize={20} minSize={15} className="left-panel">
+        <Panel className="left-panel">
           <h2>Hi there, {user.username}!</h2>
-          <p>Quote of the day: <i>The future belongs to those who believe in the beauty of their dreams</i></p>
+          <p className="qoute">Quote Of The Day: <i><Quote/></i></p>
           <div className="dashBoardButtons">
             <button className="makeFolder" onClick={() => setIsModalOpen(true)}>
               Create Folder
@@ -86,8 +109,61 @@ const Dashboard = () => {
             <FolderModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
             <button className="addNotes" onClick={addNewNote}>Add Notes</button>
           </div>
-          <div className="notesTab">
-            <b>Production Priority Tasks</b>
+
+          <div className="folderTabContainer">
+          <div className="folderTab">
+            {folders.length === 0 ? (
+              <p>📂 No folders found.</p>
+            ) : (
+              folders.map((folder) => (
+                <div key={folder.id} className="folder">
+                  <div
+                    className="folder-header"
+                    onClick={() =>
+                      setFolders((prevFolders) =>
+                        prevFolders.map((f) =>
+                          f.id === folder.id ? { ...f, isOpen: !f.isOpen } : f
+                        )
+                      )
+                    }
+                  >
+                    📂 <strong>{folder.foldername}</strong>
+                    </div>
+                    {folder.isOpen && (
+                      <div className="notes-list">
+                    {notes.filter((note) => note.folder_id === folder.id).length === 0 ? (
+                        <p>📝 No Notes found.</p>
+                      ) : (
+                        notes
+                          .filter((note) => note.folder_id === folder.id)
+                          .map((note) => (
+                            <div
+                              key={note.id}
+                              className="leftpanelnote-title"
+                              onClick={() => setSelectedNoteId(note.id)} // Store the clicked note ID
+                              >
+                                <span>📝 {note.title || "Untitled Note"}</span>
+                                <span className="trash-icon-container">
+                                  <span 
+                                    className="trash-icon" 
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevents triggering note click event
+                                      alert(`Deleting note: ${note.title}`); // Replace with delete function
+                                    }}
+                                  >
+                                    🗑️
+                                    <span className="tooltipDelete">Delete</span>
+                                  </span>
+                                </span>
+                              </div>
+                            ))
+                        )}
+                      </div>
+                    )}
+                </div>
+              ))
+            )}
+          </div>
           </div>
         </Panel>
         <Panel defaultSize={80} minSize={50} className="right-panel">
