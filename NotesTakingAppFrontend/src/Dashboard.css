@@ -1,30 +1,32 @@
 body, html {
-    overflow: hidden;
-    height: 100%;
-  }
+  overflow: hidden;
+  height: 100%;
+}
 
 .dashboard-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    overflow: hidden;
-  }
-  
-.left-panel {
-    background-color: rgba(255, 255, 255, 0.7);
-    margin: 20px;
-    height: 87vh; 
-    border-radius: 25px;
-    padding: 30px;
-    text-align: left;
-    min-width: 200px;
-  } 
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
 
-  .right-panel {
-    height: 100vh;
-    overflow: auto;  
-  }
-    
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.7);
+  margin: 20px;
+  height: 87vh;
+  border-radius: 25px;
+  padding: 30px;
+  text-align: left;
+  min-width: 200px;
+}
+
+.right-panel {
+  height: 100vh;
+  overflow: auto;  
+}
 
 .dashBoardButtons {
   display: flex;
@@ -49,14 +51,14 @@ body, html {
 
 .folderTabContainer {
   height: 45%;  
-  border: 1px solid black;
   margin-top: 30px;
   border-radius: 5px;
   overflow-y: auto; 
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .folderTab {
@@ -75,9 +77,23 @@ body, html {
   font-weight: bold;
 }
 
+.foldername {
+  display: inline-block; /* or block */
+  width: 200px;
+  padding-top: 5px;
+  padding-bottom: 5px ;
+}
+
 .folder-header {
-  padding: 5px;
   background: yellowgreen;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 5px;
+}
+
+.folder-header:hover{
+  background-color: yellow;
 }
 
 .notes-list {
@@ -91,46 +107,29 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  border: .05px solid black;
+  padding-left: 10px;
 }
 
 .leftpanelnote-title:hover {
-  background: grey;
-}
-
-.trash-icon {
-  background-color:darkred;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 10px;
-}
-
-.trash-icon:hover {
-  background-color: red;
-  transform: scale(1.2); 
-}
-
-.qoute{
-  font-size: 15px;
+  background: purple;
 }
 
 .trash-icon-container {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trash-icon {
-  position: relative;
-  background-color: darkred;
+  background-color: burlywood;
   color: white;
-  height: 100%;
-  width: 24px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 4px;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -142,13 +141,13 @@ body, html {
 .tooltipDelete {
   visibility: hidden;
   background-color: black;
-  color: white;
+  color: red;
   text-align: center;
   padding: 4px 6px;
   border-radius: 4px;
   font-size: 12px;
   position: absolute;
-  right: 130%; /* Move tooltip to the left */
+  right: 130%;
   top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
@@ -161,7 +160,32 @@ body, html {
   opacity: 1;
 }
 
+.qoute {
+  font-size: 15px;
+}
 
- 
+.nobreak {
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+}
 
-  
+.image-button {
+  align-self: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.image-button img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px; /* Optional rounded corners */
+  transition: transform 0.2s ease-in-out;
+}
+
+.image-button:hover img {
+  transform: scale(1.3); /* Slight zoom on hover */
+}
+

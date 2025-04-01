@@ -1,4 +1,4 @@
-.noteWindowDesign {
+.noteWindow {
   background-color: #fdfd96;
   padding: 20px;
   border-radius: 8px;
@@ -12,9 +12,10 @@
   gap: 5px;
   min-width: 290px;
   min-height: 250px;
+  transform-style: flat;
 }
 
-.notetextarea {
+.note-textarea {
   width: 100%;
   height: calc(100% - 90px);
   border: none;
@@ -25,7 +26,6 @@
   font-family: "Patrick Hand", cursive;
   color: #333;
   padding: 5px;
-  padding-right: 20px; /* Extra space for scrollbar */
   box-sizing: border-box;
   scrollbar-width: thin;
   
@@ -35,35 +35,27 @@
   transform: translate3d(0,0,0);
 }
 
-/* Fix scrollbar issue */
-.notetextarea::-webkit-scrollbar {
+.note-textarea::-webkit-scrollbar {
   width: 8px;
 }
 
-.notetextarea::-webkit-scrollbar-thumb {
+.note-textarea::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 4px;
 }
 
-.notetextarea::-webkit-scrollbar-track {
+.note-textarea::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
 }
 
 /* Prevent Rnd from interfering with scrolling */
-.notetextarea {
-  touch-action: auto; /* Allow scrolling */
-  pointer-events: auto; /* Ensure interaction */
+.note-textarea {
+  touch-action: auto; 
+  pointer-events: auto;
 }
 
-.notetitle {
-  width: 99%;
-  padding: 4px;
-  font-size: 14px;
-  border: none;
-  border-bottom: 1px solid;
-  background: transparent;
-  outline: none;
-  font-weight: bold;
+.note-header {
+  background-color: #fdfd96;
 }
 
 .xbutton {
@@ -108,7 +100,7 @@
   opacity: 1;
 }
 
-.folderdropdown {
+.folderDropdown {
   padding: 15px;
   font-size: 12px;
   border: 1px solid black;
@@ -123,5 +115,13 @@
   color: #333;
 }
 
-
-
+.notetitle {
+  width: 99%;
+  padding: 4px;
+  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid;
+  background: transparent;
+  outline: none;
+  font-weight: bold;
+}

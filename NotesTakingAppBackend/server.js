@@ -71,28 +71,47 @@ app.get("/folders", async (req, res) => {
   }
 });
 
-
-// CREATE NOTE API - Adds a new note to the database
+//Update data in notes 
 app.post("/api/notes", async (req, res) => {
   const { title, content, user_id, folder_id } = req.body;
-  
-  console.log("Received data:", req.body); // Debugging log
 
+  console.log("Received request to /api/notes");
+  console.log("Raw request body:", req.body); // Log full request body
+  
+  // Ensure required fields exist
   if (!user_id || !title) {
+    console.error("Validation failed: Missing title or user_id.");
     return res.status(400).json({ message: "Title and User ID are required." });
   }
 
+  // Log parsed values
+  console.log("Parsed values:");
+  console.log("Title:", title);
+  console.log("Content:", content || "");
+  console.log("User ID:", user_id);
+  console.log("Folder ID:", folder_id || "NULL");
+
   try {
+    // Log the SQL query before execution
+    console.log("Executing SQL query:");
+    console.log(
+      `INSERT INTO notes (title, content, user_id, folder_id) VALUES ('${title}', '${content || ""}', ${user_id}, ${folder_id || "NULL"})`
+    );
+
     const newNote = await pool.query(
       "INSERT INTO notes (title, content, user_id, folder_id) VALUES ($1, $2, $3, $4) RETURNING *",
       [title, content || "", user_id, folder_id || null]
     );
+
+    console.log("New note created successfully:", newNote.rows[0]);
     res.status(201).json(newNote.rows[0]);
+
   } catch (err) {
-    console.error("Error creating note:", err); // Log full error
+    console.error("Error creating note:", err); // Log full error details
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
 
 // GET NOTES API - Retrieves notes for the logged-in user
 app.get("/api/notes", async (req, res) => {
@@ -108,32 +127,74 @@ app.get("/api/notes", async (req, res) => {
   }
 });
 
+// Fetch only one note
+app.get("/api/notes/:id", async (req, res) => {
+  const { id } = req.params;
+  const { user_id, folder_id } = req.query; // Get user ID and folder ID from query
+
+  if (!user_id || !id) {
+    return res.status(400).json({ error: "Missing user_id or note ID" });
+  }
+
+  const folderCondition = folder_id ? "AND folder_id = $3" : "";
+  const query = `SELECT * FROM notes WHERE id = $1 AND user_id = $2 ${folderCondition}`;
+  const params = folder_id ? [id, user_id, folder_id] : [id, user_id];
+
+  console.log(`Fetching note with ID: ${id}, User ID: ${user_id}, Folder ID: ${folder_id}`);
+
+  try {
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Note not found or access denied" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching note:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Fetch folders by user ID
+app.get("/api/folders", async (req, res) => {
+  const userId = req.query.user_id;
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const result = await pool.query("SELECT * FROM folders WHERE user_id = $1", [userId]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+
 // Updating Data in Note Window
 app.put("/notes/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, content, folder, userId } = req.body;
+  const { title, content, folder_id, userId } = req.body;
 
-  if (isNaN(folder)) {  // Make sure folder is a number
+  // Validate input
+  if (!id || !title || !content || !folder_id || !userId) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // Ensure folder_id is a valid number
+  const parsedFolderId = parseInt(folder_id, 10);
+  if (isNaN(parsedFolderId)) {
     return res.status(400).json({ error: "Invalid folder ID" });
   }
-  
+
   try {
-    // Validate input
-    if (!id || !title || !content || !folder || !userId) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    // Ensure folder is treated as an ID (convert if needed)
-    const folderId = isNaN(folder) ? null : parseInt(folder, 10);
-
-    if (!folderId) {
-      return res.status(400).json({ error: "Invalid folder ID" });
-    }
-
     // Update the note in the database
     const result = await pool.query(
       "UPDATE notes SET title = $1, content = $2, folder_id = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
-      [title, content, folderId, id, userId]
+      [title, content, parsedFolderId, id, userId]
     );
 
     if (result.rowCount === 0) {
@@ -146,3 +207,66 @@ app.put("/notes/:id", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
+// Delete a note 
+app.delete("/api/notes/:id", async (req, res) => {
+  const { id } = req.params;
+  const { user_id } = req.body; // Ensure the frontend sends `user_id` in the request body
+
+  try {
+    const noteId = parseInt(id, 10);
+    if (isNaN(noteId)) {
+      return res.status(400).json({ error: "Invalid note ID" });
+    }
+
+    if (!user_id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Delete the note (ensuring user ownership)
+    const result = await pool.query("DELETE FROM notes WHERE id = $1 AND user_id = $2 RETURNING *", [noteId, user_id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Note not found or unauthorized" });
+    }
+
+    res.json({ message: "Note deleted successfully", deletedNote: result.rows[0] });
+  } catch (err) {
+    console.error("Error deleting note:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
+// Delete a folder 
+app.delete("/api/folders/:id", async (req, res) => {
+  const { id } = req.params;
+  const { user_id } = req.body; // Ensure user_id is provided
+
+  try {
+    const folderId = parseInt(id, 10);
+    if (isNaN(folderId)) {
+      return res.status(400).json({ error: "Invalid folder ID" });
+    }
+
+    if (!user_id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Delete the folder, ensuring it belongs to the user
+    const result = await pool.query(
+      "DELETE FROM folders WHERE id = $1 AND user_id = $2 RETURNING *",
+      [folderId, user_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Folder not found or unauthorized" });
+    }
+
+    res.json({ message: "Folder deleted successfully", deletedFolder: result.rows[0] });
+  } catch (err) {
+    console.error("Error deleting folder:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+});
+
