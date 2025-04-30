@@ -71,7 +71,7 @@ app.get("/folders", async (req, res) => {
   }
 });
 
-//Update data in notes 
+//Create notes
 app.post("/api/notes", async (req, res) => {
   const { title, content, user_id, folder_id } = req.body;
 
@@ -180,7 +180,7 @@ app.put("/notes/:id", async (req, res) => {
   const { title, content, folder_id, userId } = req.body;
 
   // Validate input
-  if (!id || !title || !content || !folder_id || !userId) {
+  if (!id || !folder_id || !userId) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
