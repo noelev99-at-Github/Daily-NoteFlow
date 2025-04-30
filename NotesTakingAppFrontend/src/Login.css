@@ -51,21 +51,6 @@
     background-position: center;
   }
   
-  @keyframes fadeInScale {
-    0% {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.03);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
   .login-container {
     text-align: center;
     display: flex;
@@ -78,8 +63,6 @@
     background-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
-    animation: fadeInScale 1s ease-out;
-    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
   }
   
   

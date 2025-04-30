@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [folders, setFolders] = useState([]);
   const [showNewNote, setShowNewNote] = useState(false);
   const [displayedNotes, setDisplayedNotes] = useState([]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // New state for logging out transition
 
   const toggleMinimize = (noteId) => closeNote(noteId);
 
@@ -64,7 +65,10 @@ const Dashboard = () => {
       const res = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       const data = await res.json();
-      setFolders(data);
+  
+      // Set isOpen: true for all folders by default
+      const foldersWithOpen = data.map(folder => ({ ...folder, isOpen: true }));
+      setFolders(foldersWithOpen);
     } catch (err) {
       console.error("Error fetching folders:", err);
     }
@@ -126,8 +130,11 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.clear();
-    window.location.href = "/login";
+    setIsLoggingOut(true); // Trigger logout animation
+    setTimeout(() => {
+      sessionStorage.clear();
+      window.location.href = "/login";
+    }, 700); // Match the animation duration
   };
 
   const closeNote = (noteId) => {
@@ -137,9 +144,9 @@ const Dashboard = () => {
   return (
     <motion.div
       className="dashboard-container"
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -100 }}
+      initial={{ opacity: 0, x: -100 }} // Start from the left side
+      animate={{ opacity: 1, x: isLoggingOut ? -100 : 0 }} // Slide to the left when logging out
+      exit={{ opacity: 0, x: -100 }} // Slide to the left when exiting
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <PanelGroup direction="horizontal">
@@ -183,15 +190,17 @@ const Dashboard = () => {
                         📂 <strong className="foldername">{folder.foldername}</strong>
                       </div>
                       <span className="trash-icon-container">
-                        <span
-                          className="trash-icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deletefolder(folder.id, user.userId, folder.foldername);
-                          }}
-                        >
-                          🗑️<span className="tooltipDelete">Delete</span>
-                        </span>
+                        {folder.foldername !== "General Notes" && (
+                          <span
+                            className="trash-icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deletefolder(folder.id, user.userId, folder.foldername);
+                            }}
+                          >
+                            🗑️<span className="tooltipDelete">Delete</span>
+                          </span>
+                        )}
                       </span>
                     </div>
                     {folder.isOpen && (

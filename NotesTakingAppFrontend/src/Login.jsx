@@ -7,11 +7,12 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoggingIn(true); // Trigger exit animation
+    setIsLoggingIn(true); // Trigger login animation
 
     try {
       const response = await fetch("http://localhost:5000/api/login", {
@@ -27,10 +28,13 @@ const Login = () => {
         sessionStorage.setItem("userId", data.userId);
         sessionStorage.setItem("username", data.username);
 
+        // Trigger success animation
+        setLoginSuccess(true);
+        
         setTimeout(() => {
           navigate("/dashboard");
           window.location.reload(); // Ensures sessionStorage is read correctly
-        }, 500); // Delay navigation for animation
+        }, 500); // Delay navigation to allow for animation
       } else {
         setIsLoggingIn(false);
         alert(data.message);
@@ -43,12 +47,21 @@ const Login = () => {
 
   return (
     <div className="loginbackground">
-      <motion.div
-        className="login-container"
-        initial={{ opacity: 1, y: 0 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -100, transition: { duration: 1, ease: "easeInOut" } }}
-      >
+        <motion.div
+          className="login-container"
+          layout="position"
+          initial={{ opacity: 0, y: -100 }} 
+          animate={{
+            opacity: 1,
+            y: loginSuccess ? -100 : 0, 
+            transition: { duration: 1, ease: "easeOut" }, 
+          }}
+          exit={{
+            opacity: 0,
+            y: -100,
+            transition: { duration: 1, ease: "easeInOut" },
+          }}
+        >
         <h2>Daily NoteFlow</h2>
         <form onSubmit={handleLogin}>
           <input
@@ -66,7 +79,9 @@ const Login = () => {
             required
           />
           <br />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={isLoggingIn}>
+            {isLoggingIn ? "Logging in..." : "Login"}
+          </button>
         </form>
       </motion.div>
     </div>

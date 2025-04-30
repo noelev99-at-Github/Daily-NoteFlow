@@ -61,6 +61,33 @@ body, html {
   overflow-y: auto;
 }
 
+
+.folderTabContainer::-webkit-scrollbar,
+.right-panel::-webkit-scrollbar {
+  width: 12px;
+}
+
+.folderTabContainer::-webkit-scrollbar-track,
+.right-panel::-webkit-scrollbar-track {
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+}
+
+.folderTabContainer::-webkit-scrollbar-thumb,
+.right-panel::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ffd6e0, #a1c4fd);
+  border-radius: 20px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.folderTabContainer::-webkit-scrollbar-thumb:hover,
+.right-panel::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+}
+
+
 .folderTab {
   border-radius: 20px;
   display: flex;
