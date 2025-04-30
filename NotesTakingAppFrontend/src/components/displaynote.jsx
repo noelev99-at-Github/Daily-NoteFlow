@@ -50,14 +50,14 @@ const DisplayNote = ({ noteId, folderId, toggleMinimize }) => {
       setNote(updatedNote);
 
       try {
-        const response = await fetch(`http://localhost:5000/notes/${noteId}`, {
+        const response = await fetch(`http://localhost:5000/api/notes/${noteId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             title: newTitle,
             content: newContent,
             folder_id: newFolderId,
-            userId,
+            user_id: userId,  // Changed from userId to user_id for consistency
           }),
         });
 

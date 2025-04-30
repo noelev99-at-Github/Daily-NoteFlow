@@ -14,16 +14,13 @@ const Dashboard = () => {
   const [notes, setNotes] = useState([]);
   const [folders, setFolders] = useState([]);
   const [showNewNote, setShowNewNote] = useState(false);
-  // Changed to track multiple displayed notes with their states
-  const [displayedNotes, setDisplayedNotes] = useState([]); // Array of {noteId, folderId, minimized}
+  const [displayedNotes, setDisplayedNotes] = useState([]); 
 
   // Modified to close the note immediately when minimize is clicked
   const toggleMinimize = (noteId) => {
-    // Instead of toggling minimize state, directly close the note
     closeNote(noteId);
   };
 
-  // Toggle display of a note (add if not displayed, remove if already displayed)
   const toggleNoteDisplay = (noteId, folderId) => {
     setDisplayedNotes(prev => {
       // Check if note is already being displayed
@@ -131,7 +128,6 @@ const Dashboard = () => {
       return console.error("User ID is missing or invalid. Cannot add a note.");
     }
   
-    // Refresh folders list first to get the latest folders including any newly created ones
     try {
       console.log("Refreshing folders before adding note");
       await fetchFolders(userId);
@@ -139,7 +135,7 @@ const Dashboard = () => {
       console.error("Error refreshing folders:", err);
     }
     
-    let folderId = 1; // Default folder (General Notes)
+    let folderId = 1; 
     try {
       // Use the freshly fetched folders from state
       console.log("Using folders:", folders);
