@@ -34,7 +34,7 @@ const Login = () => {
         setTimeout(() => {
           navigate("/dashboard");
           window.location.reload(); // Ensures sessionStorage is read correctly
-        }, 500); // Delay navigation to allow for animation
+        }, 800); // Increased delay to allow animation to complete
       } else {
         setIsLoggingIn(false);
         alert(data.message);
@@ -47,42 +47,61 @@ const Login = () => {
 
   return (
     <div className="loginbackground">
-        <motion.div
-          className="login-container"
-          layout="position"
-          initial={{ opacity: 0, y: -100 }} 
-          animate={{
-            opacity: 1,
-            y: loginSuccess ? -100 : 0, 
-            transition: { duration: 1, ease: "easeOut" }, 
-          }}
-          exit={{
-            opacity: 0,
-            y: -100,
-            transition: { duration: 1, ease: "easeInOut" },
-          }}
-        >
+      <motion.div
+        className="login-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{
+          opacity: loginSuccess ? 0 : 1,
+          y: loginSuccess ? -100 : 0,
+          transition: {
+            duration: 0.6,
+            ease: "easeInOut",
+          },
+        }}
+      >
         <h2>Daily NoteFlow</h2>
-        <form onSubmit={handleLogin}>
-          <input
+        <motion.form 
+          className="login-form"
+          onSubmit={handleLogin}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <motion.input
+            className="login-input"
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
           />
-          <input
+          <motion.input
+            className="login-input"
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
           />
-          <br />
-          <button type="submit" disabled={isLoggingIn}>
+          <motion.button 
+            className="login-button"
+            type="submit" 
+            disabled={isLoggingIn}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
             {isLoggingIn ? "Logging in..." : "Login"}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
       </motion.div>
     </div>
   );

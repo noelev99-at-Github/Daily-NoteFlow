@@ -25,17 +25,14 @@
   font-family: "Patrick Hand", cursive;
   color: #333;
   padding: 5px;
-  padding-right: 20px; /* Extra space for scrollbar */
+  padding-right: 20px;
   box-sizing: border-box;
   scrollbar-width: thin;
-  
-  /* Anti-blur fixes */
-  border-radius: 0; 
+  border-radius: 0;
   will-change: transform;
   transform: translate3d(0,0,0);
 }
 
-/* Fix scrollbar issue */
 .notetextarea::-webkit-scrollbar {
   width: 8px;
 }
@@ -49,10 +46,9 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-/* Prevent Rnd from interfering with scrolling */
 .notetextarea {
-  touch-action: auto; /* Allow scrolling */
-  pointer-events: auto; /* Ensure interaction */
+  touch-action: auto;
+  pointer-events: auto;
 }
 
 .notetitle {
@@ -122,6 +118,3 @@
   padding: 5px;
   color: #333;
 }
-
-
-

@@ -15,7 +15,8 @@ const Dashboard = () => {
   const [folders, setFolders] = useState([]);
   const [showNewNote, setShowNewNote] = useState(false);
   const [displayedNotes, setDisplayedNotes] = useState([]);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // New state for logging out transition
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [quoteLoaded, setQuoteLoaded] = useState(false); // ✅ wait for quote
 
   const toggleMinimize = (noteId) => closeNote(noteId);
 
@@ -65,8 +66,6 @@ const Dashboard = () => {
       const res = await fetch(`http://localhost:5000/folders?user_id=${userId}`);
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       const data = await res.json();
-  
-      // Set isOpen: true for all folders by default
       const foldersWithOpen = data.map(folder => ({ ...folder, isOpen: true }));
       setFolders(foldersWithOpen);
     } catch (err) {
@@ -130,11 +129,11 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggingOut(true); // Trigger logout animation
+    setIsLoggingOut(true);
     setTimeout(() => {
       sessionStorage.clear();
       window.location.href = "/login";
-    }, 700); // Match the animation duration
+    }, 700);
   };
 
   const closeNote = (noteId) => {
@@ -144,9 +143,9 @@ const Dashboard = () => {
   return (
     <motion.div
       className="dashboard-container"
-      initial={{ opacity: 0, x: -100 }} // Start from the left side
-      animate={{ opacity: 1, x: isLoggingOut ? -100 : 0 }} // Slide to the left when logging out
-      exit={{ opacity: 0, x: -100 }} // Slide to the left when exiting
+      initial={{ opacity: 0, x: -100 }}
+      animate={quoteLoaded ? { opacity: 1, x: isLoggingOut ? -500 : 0 } : {}}
+      exit={{ opacity: 0, x: -100 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <PanelGroup direction="horizontal">
@@ -157,7 +156,7 @@ const Dashboard = () => {
             </div>
             <br />
             <div className="qoute">
-              Quote Of The Day: <i className="highlight"><Quote /></i>
+              Quote Of The Day: <i className="highlight"><Quote onLoad={() => setQuoteLoaded(true)} /></i>
             </div>
           </div>
           <div className="dashBoardButtons">
@@ -236,7 +235,7 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-          <button className="image-button" onClick={handleLogout}>
+          <button className="imagebutton" onClick={handleLogout}>
             <img src="src/assets/logout.png" alt="logout" />
           </button>
         </Panel>

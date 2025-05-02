@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./quote.css";
 
-function Quote() {
+function Quote({ onLoad }) {
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
 
@@ -12,6 +12,7 @@ function Quote() {
       const quoteData = JSON.parse(data.contents);
       setQuote(quoteData[0].q);
       setAuthor(quoteData[0].a);
+      if (onLoad) onLoad(); // ✅ Notify Dashboard that quote is ready
     } catch (error) {
       console.error("Error fetching the quote:", error);
     }
