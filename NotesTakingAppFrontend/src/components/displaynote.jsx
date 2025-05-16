@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Rnd } from "react-rnd";
 import "./DisplayNote.css";
 
@@ -13,6 +13,7 @@ const DisplayNote = ({
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
@@ -27,6 +28,12 @@ const DisplayNote = ({
       setLoading(false);
     }
   }, [noteId, notes]);
+
+  useEffect(() => {
+    if (contentRef.current && note?.content) {
+      contentRef.current.innerHTML = note.content;
+    }
+  }, [note?.id]);
 
   const handleUpdate = useCallback(
     (updatedFields) => {
@@ -54,6 +61,18 @@ const DisplayNote = ({
     [note, noteId, setNotes]
   );
 
+  const handleContentChange = () => {
+    if (contentRef.current) {
+      const newContent = contentRef.current.innerHTML;
+      handleUpdate({ content: newContent });
+    }
+  };
+
+  const applyStyle = (style) => {
+    document.execCommand(style, false, null);
+    handleContentChange();
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!note) return <p>No note found.</p>;
@@ -65,6 +84,7 @@ const DisplayNote = ({
       className="noteWindow"
       enableUserSelectHack={false}
       disableDragging={false}
+      dragHandleClassName="note-header"
     >
       <div className="note-header">
         <div className="tooltip">
@@ -83,18 +103,30 @@ const DisplayNote = ({
           ))}
         </select>
       </div>
+      
       <input
         type="text"
         className="notetitle"
-        value={note.title}
+        value={note.title || ""}
         onChange={(e) => handleUpdate({ title: e.target.value })}
       />
-      <textarea
+
+      <div
         className="note-textarea"
-        value={note.content || ""}
-        onChange={(e) => handleUpdate({ content: e.target.value })}
+        contentEditable={true}
+        ref={contentRef}
+        onInput={handleContentChange}
         onMouseDown={(e) => e.stopPropagation()}
+        spellCheck={false}
       />
+
+      <div className="toolbar">
+        <button onClick={() => applyStyle('bold')} title="Bold">𝐁</button>
+        <button onClick={() => applyStyle('italic')} title="Italic">𝑰</button>
+        <button onClick={() => applyStyle('underline')} title="Underline">U̲</button>
+        <button onClick={() => applyStyle('strikeThrough')} title="Strikethrough" style={{ textDecoration: 'line-through' }}>S</button>
+        <button onClick={() => applyStyle('insertUnorderedList')} title="Bullet List">•</button>
+      </div>
     </Rnd>
   );
 };

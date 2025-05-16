@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef } from "react";
 import { Rnd } from "react-rnd";
 import "./addnotes.css";
 
@@ -8,12 +8,7 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
   const [content, setContent] = useState(initialContent);
   const [selectedFolder, setSelectedFolder] = useState(folders[0]?.id || "");
   const [isMinimized, setIsMinimized] = useState(false);
-
-  useEffect(() => {
-    if (folders.length > 0) {
-      setSelectedFolder(folders[0].id);
-    }
-  }, [folders]);
+  const contentRef = useRef(null);
 
   const handleMinimize = () => {
     setIsMinimized((prev) => !prev);
@@ -21,7 +16,6 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
 
   const handleUpdateState = (newTitle = title, newContent = content, newFolder = selectedFolder) => {
     onUpdate(id, newTitle, newContent, newFolder);
-    console.log(`Note ID ${id}: Folder ID updated to ${newFolder}`);
   };
 
   const handleTitleChange = (e) => {
@@ -30,8 +24,8 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
     handleUpdateState(newTitle, content, selectedFolder);
   };
 
-  const handleContentChange = (e) => {
-    const newContent = e.target.value;
+  const handleContentChange = () => {
+    const newContent = contentRef.current.innerHTML;
     setContent(newContent);
     handleUpdateState(title, newContent, selectedFolder);
   };
@@ -44,6 +38,11 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
 
   if (isMinimized) return null;
 
+  const applyStyle = (style) => {
+    document.execCommand(style, false, null);
+    handleContentChange(); 
+  };
+
   return (
     <Rnd
       default={{ x: 0, y: 30, width: 250, height: 200 }}
@@ -52,6 +51,7 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
       onDragStop={(e, data) => onDragStop(id, data)}
       enableUserSelectHack={false}
       disableDragging={false}
+      dragHandleClassName="noteheader"
     >
       <div className="noteheader">
         <div className="tooltip">
@@ -75,13 +75,23 @@ const Note = ({ id, initialContent, initialTitle, onDragStop, folders, onUpdate 
         onChange={handleTitleChange}
       />
 
-      <textarea
+      <div
         className="notetextarea"
-        placeholder="Write here..."
-        value={content}
-        onChange={handleContentChange}
-        onMouseDown={(e) => e.stopPropagation()}
+        contentEditable={true}
+        ref={contentRef}
+        onInput={handleContentChange}
+        suppressContentEditableWarning={true}
+        spellCheck={false}
       />
+
+      <div className="toolbar">
+        <button onClick={() => applyStyle('bold')} title="Bold">𝐁</button>
+        <button onClick={() => applyStyle('italic')} title="Italic">𝑰</button>
+        <button onClick={() => applyStyle('underline')} title="Underline">U̲</button>
+        <button onClick={() => applyStyle('strikeThrough')} title="Strikethrough" style={{ textDecoration: 'line-through' }}>S</button>
+        <button onClick={() => applyStyle('insertUnorderedList')} title="Bullet List">•</button>
+      </div>
+
     </Rnd>
   );
 };
@@ -111,17 +121,18 @@ const AddNotes = ({ notes, setNotes, showNewNote, folders }) => {
 
   return (
     <div>
-      {showNewNote && notes.length > 0 && (
-        <Note
-          key={notes[notes.length - 1].id}
-          id={notes[notes.length - 1].id}
-          initialContent={notes[notes.length - 1].content}
-          initialTitle={notes[notes.length - 1].title}
-          onDragStop={() => {}}
-          folders={folders}
-          onUpdate={handleUpdate}
-        />
-      )}
+      {showNewNote &&
+        notes.map((note) => (
+          <Note
+            key={note.id}
+            id={note.id}
+            initialContent={note.content}
+            initialTitle={note.title}
+            onDragStop={() => {}}
+            folders={folders}
+            onUpdate={handleUpdate}
+          />
+        ))}
     </div>
   );
 };
