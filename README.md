@@ -1,1 +1,35 @@
-# Daily-NoteFlow
+# Daily NoteFlow
+
+I’ve always been a fan of the spatial logic of physical sticky notes — the way you can move them around to map out the flow of ideas in your head. While Windows Sticky Notes exists, I find it disruptive to constantly minimize my browser just to view or manage them. 
+
+So I built Daily NoteFlow — **sticky notes one tab away**.
+
+---
+
+## Features
+
+### Daily Greetings & Quotes
+- Kick off your day with a fresh greeting and quote every time you log in—a little boost of cheer and wisdom, every single time.
+
+### Authentication
+- Safe and secure login/logout functionality to keep your notes **private and protected**.
+
+### Sticky Notes
+- Create **multiple notes** and keep all your ideas flowing
+- **Resizable & draggable**—arrange your thoughts however you like
+- Rich text formatting: **bold**, *italic*, underline, strikethrough, bullet points
+- **Delete notes individually** whenever you want
+
+### Folders
+- Organize sticky notes into folders
+- Delete folders and notes as needed
+- NOTE: Deleting a folder also deletes all sticky notes inside it
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React  
+- **Backend:** FastAPI  
+- **Database:** PostgreSQL
+
