@@ -4,13 +4,13 @@ I’ve always been a fan of the spatial logic of physical sticky notes — the w
 
 So I built Daily NoteFlow — **sticky notes one tab away**.
 
-Credits: Background Image by Freepik:
-https://www.freepik.com/free-ai-image/stunning-landscape-spring-festival-japan_411812266.htm#fromView=search&page=1&position=29&uuid=4627034b-a12d-4f42-9429-733340ffb11f&query=cherry+blossoms
+*Credits: Background image by Freepik: https://www.freepik.com/free-ai-image/stunning-landscape-spring-festival-japan_411812266.htm#fromView=search&page=1&position=29&uuid=4627034b-a12d-4f42-9429-733340ffb11f&query=cherry+blossoms*
+
 ---
 
 ## Features
 
-![App Preview](/NotesTakingAppFrontend/public/loginPageBackground.jpg)
+![App Preview](/NotesTakingAppFrontend/public/apppreview.png)
 
 ### Daily Greetings & Quotes
 - Kick off your day with a fresh greeting and quote every time you log in—a little boost of cheer and wisdom, every single time.
