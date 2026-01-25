@@ -10,6 +10,8 @@ https://www.freepik.com/free-ai-image/stunning-landscape-spring-festival-japan_4
 
 ## Features
 
+![App Preview](/NotesTakingAppFrontend/public/loginPageBackground.jpg)
+
 ### Daily Greetings & Quotes
 - Kick off your day with a fresh greeting and quote every time you log in—a little boost of cheer and wisdom, every single time.
 
