@@ -1,10 +1,16 @@
-# Daily NoteFlow
+# Daily NoteFlow – MVP / Version 1
 
-I’ve always been a fan of the spatial logic of physical sticky notes — the way you can move them around to map out the flow of ideas in your head. While Windows Sticky Notes exists, I find it disruptive to constantly minimize my browser just to view or manage them. 
+I’ve always been a fan of the spatial logic of physical sticky notes — the way you can move them around to map out ideas in your head. While Windows Sticky Notes exists, I found it disruptive to constantly minimize my browser just to view or manage them.  
 
-So I built Daily NoteFlow — **sticky notes one tab away**.
+So I built **Daily NoteFlow** — **sticky notes just one tab away**.
 
-*Credits: Background image by Freepik: https://www.freepik.com/free-ai-image/stunning-landscape-spring-festival-japan_411812266.htm#fromView=search&page=1&position=29&uuid=4627034b-a12d-4f42-9429-733340ffb11f&query=cherry+blossoms*
+This project was particularly challenging because it was my **first React project** and my first time working with **resizable components, multiple panels, and replicating sticky notes behavior on the web**.  
+
+I focused on **intuitive simplicity**. A workflow tool is only effective if it’s easy to use, and I’m happy to say that users can navigate Daily NoteFlow **at a glance—no tutorial required**.  
+
+Right now, Daily NoteFlow is a **functional MVP**, already a part of my daily workflow. While it isn’t “finished,” it’s **reliable and practical for real-world tasks**.
+
+*Credits: Background image by Freepik: [Stunning Landscape Spring Festival, Japan](https://www.freepik.com/free-ai-image/stunning-landscape-spring-festival-japan_411812266.htm#fromView=search&page=1&position=29&uuid=4627034b-a12d-4f42-9429-733340ffb11f&query=cherry+blossoms)*
 
 ---
 
@@ -13,21 +19,31 @@ So I built Daily NoteFlow — **sticky notes one tab away**.
 ![App Preview](/NotesTakingAppFrontend/public/apppreview.png)
 
 ### Daily Greetings & Quotes
-- Kick off your day with a fresh greeting and quote every time you log in—a little boost of cheer and wisdom, every single time.
+- Kick off your day with a fresh greeting and inspirational quote every time you log in.
 
 ### Authentication
-- Safe and secure login/logout functionality to keep your notes **private and protected**.
+- Secure login/logout functionality keeps your notes **private and protected**.
 
 ### Sticky Notes
-- Create **multiple notes** and keep all your ideas flowing
-- **Resizable & draggable**—arrange your thoughts however you like
-- Rich text formatting: **bold**, *italic*, underline, strikethrough, bullet points
-- **Delete notes individually** whenever you want
+- Create **multiple notes** to capture all your ideas  
+- **Resizable & draggable** — arrange your thoughts freely  
+- Rich text formatting: **bold**, *italic*, underline, strikethrough, bullet points  
+- **Delete notes individually** whenever you like
 
 ### Folders
-- Organize sticky notes into folders
-- Delete folders and notes as needed
-- NOTE: Deleting a folder also deletes all sticky notes inside it
+- Organize sticky notes into folders  
+- Delete folders and notes as needed  
+- ⚠️ Deleting a folder **removes all sticky notes inside it**
+
+---
+
+## Possible Features in Version 2
+
+- **Ongoing improvements** — fix minor bugs and optimize performance  
+- **Customizable backgrounds/wallpapers** — personalize and refresh your workspace  
+- **Built-in Pomodoro timer** — boost productivity with time management  
+- **Image support in sticky notes** — attach visuals to your notes  
+- **Integrating Gen AI** — enable AI-powered queries and assistance
 
 ---
 
@@ -37,3 +53,4 @@ So I built Daily NoteFlow — **sticky notes one tab away**.
 - **Backend:** FastAPI  
 - **Database:** PostgreSQL
 
+---
