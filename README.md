@@ -50,7 +50,7 @@ Right now, Daily NoteFlow is a functional MVP, and it already a part of my own d
 ## 🛠️ Tech Stack
 
 - **Frontend:** React  
-- **Backend:** FastAPI  
+- **Backend:** Express.js  
 - **Database:** PostgreSQL
 
 ---
